@@ -1,3 +1,5 @@
+package cloudcomputing
+
 /**
   * use map reduce to perform query.
   * the purpose of these examples to show how to use spark map reduce to achieve the similar functions as spark sql
@@ -7,7 +9,7 @@ import com.datastax.spark.connector._
 import org.apache.log4j.{Level, Logger}
 
 
-object MapReduceExample {
+object MapReduceExamples {
 
   def main(args: Array[String]): Unit = {
 
@@ -19,7 +21,7 @@ object MapReduceExample {
     val sparkMaster = "local[4]"  //can override spark master address when submitting spark jobs
 
     // cassandra address and credentials should be managed by tools like k8s, here we use hardcode for simplicity.
-    val cassandraHost = "cass1,cass2,cass3" //change cassandra addresses to yours
+    val cassandraHost = "192.168.128.81,192.168.128.82,192.168.128.83" //change cassandra addresses to yours
 //    val cassandraPort = "9042" // default cassandra port can be skipped
 //    val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
 //    val cassandraAuthPassword = "cassandra"

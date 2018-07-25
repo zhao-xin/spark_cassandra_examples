@@ -46,5 +46,3 @@ insert into date(campus,date,sensor_id,temperature) values ('Gatton', '2018-06-0
 
 insert into date(campus,date,sensor_id,temperature) values ('St Lucia', '2018-06-01', 1, 26.1) ;
 
-select * from data where campus = 'St Lucia' ;
-select * from data where date = '2018-06-05';

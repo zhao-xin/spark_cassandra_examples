@@ -20,7 +20,7 @@ object SqlExamples {
     val sparkMaster = "local[4]"  //can override spark master address when submitting spark jobs
 
     // cassandra address and credentials should be managed by tools like k8s, here we use hardcode for simplicity.
-      val cassandraHost = "cass1,cass2,cass3" //change cassandra addresses to yours
+      val cassandraHost = "192.168.128.81,192.168.128.82,192.168.128.83" //change cassandra addresses to yours
 //      val cassandraPort = "9042" // default cassandra port can be skipped
 //      val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
 //      val cassandraAuthPassword = "cassandra"
