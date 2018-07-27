@@ -4,10 +4,10 @@ package cloudcomputing
   * use map reduce to perform query.
   * the purpose of these examples to show how to use spark map reduce to achieve the similar functions as spark sql
   */
-import org.apache.spark._
 import com.datastax.spark.connector._
-import org.apache.log4j.{Level, Logger}
-
+import org.apache.spark._
+import org.apache.log4j.Logger
+import org.apache.log4j.Level
 
 object MapReduceExamples {
 
@@ -17,24 +17,27 @@ object MapReduceExamples {
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
-    /////////////////// configurations ///////////////////
-    val sparkMaster = "local[4]"  //can override spark master address when submitting spark jobs
+    val appName = "MapReduceExamples"
 
-    // cassandra address and credentials should be managed by tools like k8s, here we use hardcode for simplicity.
+    /////////////////// local debug ///////////////////
+    val sparkMaster = "local[4]"
+
     val cassandraHost = "192.168.128.81,192.168.128.82,192.168.128.83" //change cassandra addresses to yours
 //    val cassandraPort = "9042" // default cassandra port can be skipped
 //    val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
 //    val cassandraAuthPassword = "cassandra"
 
-    /////////////////// init spark ///////////////////
     val conf = new SparkConf(true)
       .set("spark.cassandra.connection.host", cassandraHost)
 //      .set("spark.cassandra.connection.port", cassandraPort)
 //      .set("spark.cassandra.auth.username", cassandraAuthUsername)
 //      .set("spark.cassandra.auth.password", cassandraAuthPassword)
 
-    val appName = "DataFrameExamples"
     val sc = new SparkContext(sparkMaster, appName, conf)
+
+    /////////////////// init spark ///////////////////
+//    val conf = new SparkConf(true).setAppName(appName)
+//    val sc = new SparkContext(conf)
 
     /////////////////// init spark cassandra connector ///////////////////
     val keySpace = "cloudcomputing"
@@ -46,7 +49,7 @@ object MapReduceExamples {
 
     // all records in campus "St Lucia"
     val rdd1 = cassTable.collect
-
+    println()
     rdd1.foreach(println)
     println()
 
@@ -65,6 +68,7 @@ object MapReduceExamples {
       .map{case (date, (count, sum)) => (date, sum/count)}
 
     rdd3.foreach(println)
+    println()
 
     /////////////////// close spark ///////////////////
     sc.stop()

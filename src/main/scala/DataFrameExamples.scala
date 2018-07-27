@@ -5,10 +5,11 @@ package cloudcomputing
   * compared with sql, dataframe query has stronger compiler error check
   * dataframe is the most practical method to perform query
   */
-import org.apache.log4j.{Level, Logger}
 import org.apache.spark._
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
+import org.apache.log4j.Logger
+import org.apache.log4j.Level
 
 object DataFrameExamples {
 
@@ -18,29 +19,30 @@ object DataFrameExamples {
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
-    /////////////////// configurations ///////////////////
-    val sparkMaster = "local[4]"  //can override spark master address when submitting spark jobs
+    val appName = "DataFrameExamples"
 
-    // cassandra address and credentials should be managed by tools like k8s, here we use hardcode for simplicity.
+    /////////////////// local debug ///////////////////
+    val sparkMaster = "local[4]"
+
     val cassandraHost = "192.168.128.81,192.168.128.82,192.168.128.83" //change cassandra addresses to yours
 //    val cassandraPort = "9042" // default cassandra port can be skipped
 //    val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
 //    val cassandraAuthPassword = "cassandra"
 
-    /////////////////// init spark ///////////////////
     val conf = new SparkConf(true)
       .set("spark.cassandra.connection.host", cassandraHost)
 //      .set("spark.cassandra.connection.port", cassandraPort)
 //      .set("spark.cassandra.auth.username", cassandraAuthUsername)
 //      .set("spark.cassandra.auth.password", cassandraAuthPassword)
 
-    val appName = "DataFrameExamples"
     val sc = new SparkContext(sparkMaster, appName, conf)
+    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
 
-    /////////////////// init spark sql ///////////////////
+    /////////////////// init spark ///////////////////
+//    val spark = SparkSession.builder.appName(appName).getOrCreate
+
     val keySpace = "cloudcomputing"
     val table = "data"
-    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
 
     val dataframe = spark
       .read
@@ -62,10 +64,10 @@ object DataFrameExamples {
     df2.show()
 
     // average temperature of each day in campus "St Lucia"
-    val df3 = df1.filter($"campus" === "St Lucia").groupBy($"date").agg(avg($"temperature").as("avg_temp_day"))
+    val df3 = dataframe.filter($"campus" === "St Lucia").groupBy($"date").agg(avg($"temperature").as("avg_temp_day"))
     df3.show()
 
     /////////////////// close spark ///////////////////
-    sc.stop()
+    spark.stop()
   }
 }

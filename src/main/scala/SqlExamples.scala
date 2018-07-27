@@ -5,40 +5,40 @@ package cloudcomputing
   * sql text is the most simple method to perform query
   */
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark._
+import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
 
 object SqlExamples {
 
   def main(args: Array[String]): Unit = {
-
     // turn off chatty off for local development. DO NOT do this in production
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
-    /////////////////// configurations ///////////////////
-    val sparkMaster = "local[4]"  //can override spark master address when submitting spark jobs
+    val appName = "SqlExamples"
 
-    // cassandra address and credentials should be managed by tools like k8s, here we use hardcode for simplicity.
-      val cassandraHost = "192.168.128.81,192.168.128.82,192.168.128.83" //change cassandra addresses to yours
-//      val cassandraPort = "9042" // default cassandra port can be skipped
-//      val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
-//      val cassandraAuthPassword = "cassandra"
+    /////////////////// local debug ///////////////////
+    val sparkMaster = "local[4]"
 
-    /////////////////// init spark ///////////////////
+    val cassandraHost = "192.168.128.81,192.168.128.82,192.168.128.83" //change cassandra addresses to yours
+//    val cassandraPort = "9042" // default cassandra port can be skipped
+//    val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
+//    val cassandraAuthPassword = "cassandra"
+
     val conf = new SparkConf(true)
       .set("spark.cassandra.connection.host", cassandraHost)
 //      .set("spark.cassandra.connection.port", cassandraPort)
 //      .set("spark.cassandra.auth.username", cassandraAuthUsername)
 //      .set("spark.cassandra.auth.password", cassandraAuthPassword)
 
-    val appName = "SqlExamples"
     val sc = new SparkContext(sparkMaster, appName, conf)
+    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
 
-    /////////////////// init spark sql ///////////////////
+    /////////////////// init spark ///////////////////
+//    val spark = SparkSession.builder.appName(appName).getOrCreate
+
     val keySpace = "cloudcomputing"
     val table = "data"
-    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
 
     val dataframe = spark
       .read
@@ -72,6 +72,6 @@ object SqlExamples {
     df3.show()
 
     /////////////////// close spark ///////////////////
-    sc.stop()
+    spark.stop()
   }
 }
