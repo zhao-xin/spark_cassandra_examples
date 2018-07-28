@@ -20,22 +20,13 @@ object MapReduceExamples {
     val appName = "MapReduceExamples"
 
     /////////////////// local debug ///////////////////
-    val sparkMaster = "local[4]"
-
-    val cassandraHost = "192.168.128.81,192.168.128.82,192.168.128.83" //change cassandra addresses to yours
-//    val cassandraPort = "9042" // default cassandra port can be skipped
-//    val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
-//    val cassandraAuthPassword = "cassandra"
-
+    val sparkMaster = "local"
+    val cassandraHost = "cassandra1.zones.eait.uq.edu.au,cassandra2.zones.eait.uq.edu.au,cassandra3.zones.eait.uq.edu.au"
     val conf = new SparkConf(true)
       .set("spark.cassandra.connection.host", cassandraHost)
-//      .set("spark.cassandra.connection.port", cassandraPort)
-//      .set("spark.cassandra.auth.username", cassandraAuthUsername)
-//      .set("spark.cassandra.auth.password", cassandraAuthPassword)
-
     val sc = new SparkContext(sparkMaster, appName, conf)
 
-    /////////////////// init spark ///////////////////
+    /////////////////// spark-submit job ///////////////////
 //    val conf = new SparkConf(true).setAppName(appName)
 //    val sc = new SparkContext(conf)
 

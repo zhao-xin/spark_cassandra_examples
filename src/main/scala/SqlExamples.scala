@@ -11,33 +11,24 @@ import org.apache.spark.sql.SparkSession
 object SqlExamples {
 
   def main(args: Array[String]): Unit = {
-    // turn off chatty off for local development. DO NOT do this in production
+    // turn chatty log off for local development
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
     val appName = "SqlExamples"
 
     /////////////////// local debug ///////////////////
-//    val sparkMaster = "local"
-//
-//    val cassandraHost = "cassandra1.zones.eait.uq.edu.au,cassandra2.zones.eait.uq.edu.au,cassandra3.zones.eait.uq.edu.au"
-//    //    val cassandraPort = "9042" // default cassandra port can be skipped
-//    //    val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
-//    //    val cassandraAuthPassword = "cassandra"
-//
-//    val conf = new SparkConf(true)
-//      .set("spark.cassandra.connection.host", cassandraHost)
-//    //      .set("spark.cassandra.connection.port", cassandraPort)
-//    //      .set("spark.cassandra.auth.username", cassandraAuthUsername)
-//    //      .set("spark.cassandra.auth.password", cassandraAuthPassword)
-//
-//    val sc = new SparkContext(sparkMaster, appName, conf)
-//    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
+    val sparkMaster = "local"
+    val cassandraHost = "cassandra1.zones.eait.uq.edu.au,cassandra2.zones.eait.uq.edu.au,cassandra3.zones.eait.uq.edu.au"
+    val conf = new SparkConf(true)
+      .set("spark.cassandra.connection.host", cassandraHost)
+    val sc = new SparkContext(sparkMaster, appName, conf)
+    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
 
-    /////////////////// used with spark-submit ///////////////////
-    val spark = SparkSession.builder.appName(appName).getOrCreate
+    /////////////////// spark-submit job ///////////////////
+    //    val spark = SparkSession.builder.appName(appName).getOrCreate
 
-    /////////////////// sql (NOT cassandra cql) ///////////////////
+    /////////////////// init spark sql ///////////////////
     val keySpace = "cloudcomputing"
     val table = "data"
 
@@ -47,6 +38,7 @@ object SqlExamples {
       .options(Map("keyspace" -> keySpace, "table" -> table))
       .load()
 
+    /////////////////// sql (NOT cassandra cql) ///////////////////
     dataframe.createOrReplaceTempView(table)
 
     // all records in campus "St Lucia"
