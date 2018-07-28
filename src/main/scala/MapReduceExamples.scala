@@ -8,6 +8,7 @@ import com.datastax.spark.connector._
 import org.apache.spark._
 import org.apache.log4j.Logger
 import org.apache.log4j.Level
+import org.apache.spark.sql.SparkSession
 
 object MapReduceExamples {
 
@@ -29,30 +30,21 @@ object MapReduceExamples {
     /////////////////// spark-submit job ///////////////////
     val conf = new SparkConf(true).setAppName(appName)
     val sc = new SparkContext(conf)
+
     /////////////////// init spark cassandra connector ///////////////////
     val keySpace = "cloudcomputing"
-
-
     val table = "data"
 
     val cassTable = sc.cassandraTable[(String, Int, Float)](keySpace, table).select("date", "sensor_id", "temperature").where("campus = ?", "St Lucia" );
 
+    val spark = SparkSession.builder.getOrCreate
+    import spark.implicits._
     ///////////////////// map reduce ///////////////////
 
-    // average temperature of each day in campus "St Lucia"
-    val rdd3 = cassTable.map{
-      case (date, sensor_id, temperature) => (date, (1, temperature))
-    }.reduceByKey((a,b) => (a._1+b._1, a._2+b._2))
-     .map{case (date, (count, sum)) => (date, sum/count)}
-
-    rdd3.foreach(print)
-
-
     // all records in campus "St Lucia"
-    val rdd1 = cassTable.collect
+    val rdd1 = cassTable.map{case (date, sensor_id,temperature) => (date, sensor_id, temperature)}
 
-
-    rdd1.foreach(print)
+    rdd1.toDF(Array("date", "sensor_id", "temperature"):_*).show
 
     // average temperature in campus "St Lucia"
     val rdd2 = cassTable.map{
@@ -60,10 +52,18 @@ object MapReduceExamples {
     }.reduce((a,b) => (a._1+b._1, a._2+b._2))
 
     println("avg_temp: " + rdd2._2/rdd2._1)
+    println
 
+    // average temperature of each day in campus "St Lucia"
+    val rdd3 = cassTable.map{
+      case (date, sensor_id, temperature) => (date, (1, temperature))
+    }.reduceByKey((a,b) => (a._1+b._1, a._2+b._2))
+      .map{case (date, (count, sum)) => (date, sum/count)}
 
+    rdd3.toDF(Array("date", "ave_t_date"):_*).show
 
     /////////////////// close spark ///////////////////
     sc.stop()
+    spark.stop()
   }
 }
