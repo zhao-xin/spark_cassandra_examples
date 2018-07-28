@@ -22,15 +22,15 @@ object DataFrameExamples {
     val appName = "DataFrameExamples"
 
     /////////////////// local debug ///////////////////
-    val sparkMaster = "local"
-    val cassandraHost = "cassandra1.zones.eait.uq.edu.au,cassandra2.zones.eait.uq.edu.au,cassandra3.zones.eait.uq.edu.au"
-    val conf = new SparkConf(true)
-      .set("spark.cassandra.connection.host", cassandraHost)
-    val sc = new SparkContext(sparkMaster, appName, conf)
-    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
+//    val sparkMaster = "local"
+//    val cassandraHost = "cassandra1.zones.eait.uq.edu.au,cassandra2.zones.eait.uq.edu.au,cassandra3.zones.eait.uq.edu.au"
+//    val conf = new SparkConf(true)
+//      .set("spark.cassandra.connection.host", cassandraHost)
+//    val sc = new SparkContext(sparkMaster, appName, conf)
+//    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
 
     /////////////////// spark-submit job ///////////////////
-    //    val spark = SparkSession.builder.appName(appName).getOrCreate
+        val spark = SparkSession.builder.appName(appName).getOrCreate
 
     /////////////////// init spark sql ///////////////////
     val keySpace = "cloudcomputing"
