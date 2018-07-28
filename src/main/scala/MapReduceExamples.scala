@@ -43,27 +43,23 @@ object MapReduceExamples {
     val rdd3 = cassTable.map{
       case (date, sensor_id, temperature) => (date, (1, temperature))
     }.reduceByKey((a,b) => (a._1+b._1, a._2+b._2))
-//      .map{case (date, (count, sum)) => (date, sum/count)}
+     .map{case (date, (count, sum)) => (date, sum/count)}
 
-    println()
-    rdd3.foreach(println)
-    println()
+    rdd3.foreach(print)
+
 
     // all records in campus "St Lucia"
     val rdd1 = cassTable.collect
 
-    println()
-    rdd1.foreach(println)
-    println()
+
+    rdd1.foreach(print)
 
     // average temperature in campus "St Lucia"
     val rdd2 = cassTable.map{
       case (date, sensor_id, temperature) => (1, temperature)
     }.reduce((a,b) => (a._1+b._1, a._2+b._2))
 
-    println()
     println("avg_temp: " + rdd2._2/rdd2._1)
-    println()
 
 
 
