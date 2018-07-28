@@ -18,25 +18,26 @@ object SqlExamples {
     val appName = "SqlExamples"
 
     /////////////////// local debug ///////////////////
-    val sparkMaster = "local[4]"
+//    val sparkMaster = "local"
+//
+//    val cassandraHost = "cassandra1.zones.eait.uq.edu.au,cassandra2.zones.eait.uq.edu.au,cassandra3.zones.eait.uq.edu.au"
+//    //    val cassandraPort = "9042" // default cassandra port can be skipped
+//    //    val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
+//    //    val cassandraAuthPassword = "cassandra"
+//
+//    val conf = new SparkConf(true)
+//      .set("spark.cassandra.connection.host", cassandraHost)
+//    //      .set("spark.cassandra.connection.port", cassandraPort)
+//    //      .set("spark.cassandra.auth.username", cassandraAuthUsername)
+//    //      .set("spark.cassandra.auth.password", cassandraAuthPassword)
+//
+//    val sc = new SparkContext(sparkMaster, appName, conf)
+//    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
 
-    val cassandraHost = "192.168.128.81,192.168.128.82,192.168.128.83" //change cassandra addresses to yours
-//    val cassandraPort = "9042" // default cassandra port can be skipped
-//    val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
-//    val cassandraAuthPassword = "cassandra"
+    /////////////////// used with spark-submit ///////////////////
+    val spark = SparkSession.builder.appName(appName).getOrCreate
 
-    val conf = new SparkConf(true)
-      .set("spark.cassandra.connection.host", cassandraHost)
-//      .set("spark.cassandra.connection.port", cassandraPort)
-//      .set("spark.cassandra.auth.username", cassandraAuthUsername)
-//      .set("spark.cassandra.auth.password", cassandraAuthPassword)
-
-    val sc = new SparkContext(sparkMaster, appName, conf)
-    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
-
-    /////////////////// init spark ///////////////////
-//    val spark = SparkSession.builder.appName(appName).getOrCreate
-
+    /////////////////// sql (NOT cassandra cql) ///////////////////
     val keySpace = "cloudcomputing"
     val table = "data"
 
@@ -47,8 +48,6 @@ object SqlExamples {
       .load()
 
     dataframe.createOrReplaceTempView(table)
-
-    /////////////////// sql (NOT cassandra cql) ///////////////////
 
     // all records in campus "St Lucia"
     val df1 = spark.sql("select * from data where campus = 'St Lucia'") //one time one partition, more than one partition cause full table scan
