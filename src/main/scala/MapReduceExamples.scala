@@ -44,6 +44,9 @@ object MapReduceExamples {
     }.reduceByKey((a,b) => (a._1+b._1, a._2+b._2))
       .map{case (date, (count, sum)) => (date, sum/count)}
 
+    rdd3.foreach(println)
+    println()
+
     // all records in campus "St Lucia"
     val rdd1 = cassTable.collect
     println()
@@ -58,8 +61,7 @@ object MapReduceExamples {
     println("avg_temp: " + rdd2._2/rdd2._1)
     println()
 
-    rdd3.foreach(println)
-    println()
+
 
     /////////////////// close spark ///////////////////
     sc.stop()
