@@ -20,15 +20,15 @@ object MapReduceExamples {
     val appName = "MapReduceExamples"
 
     /////////////////// local debug //////////////////
-    val sparkMaster = "local"
-    val cassandraHost = "cassandra1.zones.eait.uq.edu.au,cassandra2.zones.eait.uq.edu.au,cassandra3.zones.eait.uq.edu.au"
-    val conf = new SparkConf(true)
-      .set("spark.cassandra.connection.host", cassandraHost)
-    val sc = new SparkContext(sparkMaster, appName, conf)
+//    val sparkMaster = "local"
+//    val cassandraHost = "cassandra1.zones.eait.uq.edu.au,cassandra2.zones.eait.uq.edu.au,cassandra3.zones.eait.uq.edu.au"
+//    val conf = new SparkConf(true)
+//      .set("spark.cassandra.connection.host", cassandraHost)
+//    val sc = new SparkContext(sparkMaster, appName, conf)
 
     /////////////////// spark-submit job ///////////////////
-//    val conf = new SparkConf(true).setAppName(appName)
-//    val sc = new SparkContext(conf)
+    val conf = new SparkConf(true).setAppName(appName)
+    val sc = new SparkContext(conf)
     /////////////////// init spark cassandra connector ///////////////////
     val keySpace = "cloudcomputing"
 
