@@ -15,32 +15,24 @@ object DataFrameExamples {
 
   def main(args: Array[String]): Unit = {
 
-    // turn off chatty off for local development. DO NOT do this in production
+    // turn chatty log off for local development
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
     val appName = "DataFrameExamples"
 
     /////////////////// local debug ///////////////////
-    val sparkMaster = "local[4]"
+//    val sparkMaster = "local"
+//    val cassandraHost = "cassandra1.zones.eait.uq.edu.au,cassandra2.zones.eait.uq.edu.au,cassandra3.zones.eait.uq.edu.au"
+//    val conf = new SparkConf(true)
+//      .set("spark.cassandra.connection.host", cassandraHost)
+//    val sc = new SparkContext(sparkMaster, appName, conf)
+//    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
 
-    val cassandraHost = "192.168.128.81,192.168.128.82,192.168.128.83" //change cassandra addresses to yours
-//    val cassandraPort = "9042" // default cassandra port can be skipped
-//    val cassandraAuthUsername = "cassandra" //anonymously login can be skipped
-//    val cassandraAuthPassword = "cassandra"
+    /////////////////// spark-submit job ///////////////////
+        val spark = SparkSession.builder.appName(appName).getOrCreate
 
-    val conf = new SparkConf(true)
-      .set("spark.cassandra.connection.host", cassandraHost)
-//      .set("spark.cassandra.connection.port", cassandraPort)
-//      .set("spark.cassandra.auth.username", cassandraAuthUsername)
-//      .set("spark.cassandra.auth.password", cassandraAuthPassword)
-
-    val sc = new SparkContext(sparkMaster, appName, conf)
-    val spark = SparkSession.builder.appName(sc.appName).master(sc.master).config(sc.getConf).getOrCreate
-
-    /////////////////// init spark ///////////////////
-//    val spark = SparkSession.builder.appName(appName).getOrCreate
-
+    /////////////////// init spark sql ///////////////////
     val keySpace = "cloudcomputing"
     val table = "data"
 
@@ -49,8 +41,6 @@ object DataFrameExamples {
       .format("org.apache.spark.sql.cassandra")
       .options(Map("keyspace" -> keySpace, "table" -> table))
       .load()
-
-    dataframe.createOrReplaceTempView(table)
 
     /////////////////// dataframe query ///////////////////
     import spark.implicits._
